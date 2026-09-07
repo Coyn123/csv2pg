@@ -1,0 +1,16 @@
+# Build output -- regenerate with `make`, package with `make dist`.
+/build/
+/dist/
+
+# Python (tools/csv2schema.py, tools/gen_schema.py)
+__pycache__/
+*.pyc
+
+# Editor / IDE
+.vs/
+.vscode/
+*.user
+
+# Windows
+Thumbs.db
+desktop.ini

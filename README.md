@@ -72,6 +72,21 @@ statically.
 Note: `make` lives at `C:/msys64/usr/bin/make.exe`; Git Bash's `/usr/bin` does
 not have it. Either call it by full path or run the build from an MSYS2 shell.
 
+## Shipping a build
+
+`build/` is the whole product -- `csv2pg.exe` and its DLLs, nothing else,
+runnable on any Windows machine with no MSYS2 and no compiler. To hand it to
+one:
+
+```bash
+make dist
+```
+
+This builds if needed and zips `build/*.exe` and `build/*.dll` into
+`dist/csv2pg-win64.zip`. Send that file; the recipient unzips it anywhere and
+runs `csv2pg.exe` directly. The only runtime requirement on their end is
+network access to a PostgreSQL server -- nothing needs to be installed.
+
 If the schema ever changes, regenerate the embedded column table rather than
 editing `src/schema.h` by hand:
 
@@ -291,7 +306,7 @@ src/csv2pg.cpp          the whole program
 src/schema.h            generated column + index table (do not edit)
 src/schema_sql.h        the runtime schema: the built-in one, or --schema's
 tools/gen_schema.py     parses contracts_schema.sql -> src/schema.h
-tools/stage_dlls.sh     copies libpq's DLLs next to the exe
+tools/stage_dlls.sh     copies libpq's DLLs next to the exe (used by `make deps`)
 tools/csv2schema.py     derives a schema from CSV data, for --schema
 tools/load_years.sh     loads several years and attaches them as partitions
 contracts_schema.sql    the pg_dump this was built from

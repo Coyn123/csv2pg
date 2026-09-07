@@ -1,6 +1,7 @@
 # csv2pg -- build with the MSYS2 UCRT64 toolchain.
 #
 #   make            build build/csv2pg.exe and copy its runtime DLLs beside it
+#   make dist       zip build/ into dist/csv2pg-win64.zip for handing off
 #   make schema     regenerate src/schema.h from contracts_schema.sql
 #   make clean
 
@@ -19,7 +20,7 @@ BIN   := $(BUILD)/csv2pg.exe
 SRC   := src/csv2pg.cpp
 HDR   := src/schema.h src/schema_sql.h
 
-.PHONY: all schema clean deps
+.PHONY: all schema clean deps dist
 
 all: $(BIN) deps
 
@@ -40,6 +41,14 @@ $(BUILD)/tmp:
 # left alone. Repeats until the set stops growing (libpq pulls in ssl, icu, ...).
 deps: $(BIN)
 	@sh tools/stage_dlls.sh "$(BIN)" "$(BUILD)" "$(DLL_DIR)"
+
+# Zips the self-contained build/ folder (exe + DLLs) for handing to a machine
+# that has neither MSYS2 nor a compiler. That folder is the whole product;
+# nothing else needs to travel with it.
+dist: all
+	mkdir -p dist
+	powershell -NoProfile -Command "Compress-Archive -Path '$(BUILD)/*.exe','$(BUILD)/*.dll' -DestinationPath 'dist/csv2pg-win64.zip' -Force"
+	@echo "packaged dist/csv2pg-win64.zip"
 
 schema:
 	python tools/gen_schema.py
